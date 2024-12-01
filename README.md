@@ -262,7 +262,7 @@ apt-get install isc-dhcp-relay netcat -y
 service isc-dhcp-relay start
 
 echo 'SERVERS="10.66.2.11" # IP DHCP Server
-INTERFACES="eth1 eth2 eth3 eth4"
+INTERFACES="eth0 eth1 eth2 eth3"
 OPTIONS=""' > /etc/default/isc-dhcp-relay
 
 echo 'net.ipv4.ip_forward=1' > /etc/sysctl.conf
