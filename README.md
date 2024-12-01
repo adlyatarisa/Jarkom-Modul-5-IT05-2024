@@ -289,7 +289,7 @@ HIA tidak dapat ping Fairy
 
 ## Misi 2 No 3 
 
-Tambahkan config berikut ke `/root/.bashrc`
+1. Tambahkan config berikut ke `/root/.bashrc`
 ```
 export DEBIAN_FRONTEND=noninteractive
 apt update
@@ -309,6 +309,11 @@ echo 'options {
 }; > /etc/bind/named.conf.options
 
 service bind9 restart
+```
+2. kemudian jalankan command berikut pada console HDD
+```
+iptables -P INPUT DROP
+iptables -A INPUT -s 10.66.2.11 -j ACCEPT
 ```
 ### Testing
 Fairy bisa mengakses HDD
@@ -333,6 +338,56 @@ bisa dilihat dari gambar berikut, pesan dari Fairy sampai di HDD sedangkan dari 
 
 <img width="546" alt="image" src="https://github.com/user-attachments/assets/5f5d4ad9-cb40-4073-b2e4-28c7030b2814">
 
+## Misi 2 No 4
+lakukan config berikut di HollowZero
+```
+export DEBIAN_FRONTEND=noninteractive
+apt update
+apt install apache2 -y
 
+echo 'Welcome to HollowZero' > /var/www/html/index.html
 
+echo '<VirtualHost *:80>
 
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+
+service apache2 restart
+```
+kemudian jalankan command berikut di HollowZero
+```
+iptables -P INPUT DROP
+iptables -A INPUT -s 10.66.2.64/26 -m time --weekdays Mon,Tue,Wed,Thu,Fri -j ACCEPT
+iptables -A INPUT -s 10.66.1.0/24 -m time --weekdays Mon,Tue,Wed,Thu,Fri -j ACCEPT
+```
+
+### Testing
+
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/8412ce48-7dc1-473d-9dd6-010501117850">
+
+<img width="696" alt="image" src="https://github.com/user-attachments/assets/2ddbe921-5ca0-4e2b-ae2a-1adf029a8441">
+
+Dapat dilihat dari gambar di atas, Caesar tidak dapat ngeping dan ngecurl HollowZero karena ini hari Minggu. 
+
+Untuk memastikan, tambahin hari minggu ke iptables punya A8 tadi agar dapat mengakses HollowZero. Namun sebelumnya pastikan telah menjalankan command `iptables -D INPUT 1` untuk menghapus iptables sebelumnya
+
+<img width="719" alt="image" src="https://github.com/user-attachments/assets/8c4c315f-680d-4a08-b00a-f723f5db4c75">
+
+#### Caesar
+<img width="548" alt="image" src="https://github.com/user-attachments/assets/7205f7e1-04ef-4548-94a3-8cfb0cad4967">
+
+bisa ngeping dan ngecurl HollowZero
+
+#### Policeboo
+<img width="568" alt="image" src="https://github.com/user-attachments/assets/be55ed10-f0ee-43a4-b7ee-10e19e8c4e46">
+
+Policeboo tidak bisa ngeping dan ngecurl HollowZero karena hanya bisa mengakses di hari senin-jumat saja
+
+#### Lycaon
+<img width="605" alt="image" src="https://github.com/user-attachments/assets/aa754aa4-9ccc-49e3-8d41-e01d74fad2a3">
+
+Lycaon tidak bisa ngeping dan ngecurl HollowZero karena tidak memiliki akses sama sekali ke HollowZero
