@@ -308,7 +308,7 @@ echo 'options {
         auth-nxdomain no;
 
         listen-on-v6 { any; };
-}; > /etc/bind/named.conf.options
+};' > /etc/bind/named.conf.options
 
 service bind9 restart
 ```
@@ -453,6 +453,54 @@ PoliceBoo gabisa akses karena cuma bisa sampe jam 17.00 saja sedangkan sekarang 
 <img width="544" alt="image" src="https://github.com/user-attachments/assets/c721523a-c49d-4203-83d6-4f21875eece2">
 
 Lycaon masih bisa akses karena jam nya masih sesuai
+
+## Misi 2 No 6
+> HIA harus memblokir aktivitas port scanning yang melebihi 25 port dalam rentang 10 detik, penyerang yang diblokir tidak bisa ping, nc, atau curl ke HIA, log dari iptables akan tercatat untuk analisis.
+jalankan command bereikut di HIA
+```
+# Atur rate limit untuk port scanning (maksimum 25 koneksi per 10 detik)
+iptables -N PORTSCAN
+iptables -A INPUT -p tcp --dport 1:100 -m state --state NEW -m recent --set --name portscan
+iptables -A INPUT -p tcp --dport 1:100 -m state --state NEW -m recent --update --seconds 10 --hitcount 25 --name portscan -j PORTSCAN
+
+# Blokir IP yang terdeteksi melakukan port scanning tidak wajar
+iptables -A PORTSCAN -m recent --set --name blacklist
+iptables -A PORTSCAN -j DROP
+
+# Blokir semua aktivitas dari IP yang ada di daftar blacklist
+iptables -A INPUT -m recent --name blacklist --rcheck -j REJECT
+iptables -A OUTPUT -m recent --name blacklist --rcheck -j REJECT
+
+# Logging untuk port scanning
+iptables -A PORTSCAN -j LOG --log-prefix='PORT SCAN DETECTED' --log-level 4
+```
+
+### Testing
+Sebelum Nmap masih bisa nc, ping, curl HIA
+
+#### nc
+
+<img width="583" alt="image" src="https://github.com/user-attachments/assets/4b452512-1c4e-40a1-a2d8-6d43d6a88931">
+
+<img width="251" alt="image" src="https://github.com/user-attachments/assets/76dbf491-3311-4826-9f75-1a16bfb668b2">
+
+#### ping dan curl
+
+<img width="546" alt="image" src="https://github.com/user-attachments/assets/e8cb1cfa-e399-444f-b581-89dce4faaae5">
+
+Sesudah nmap, dah gak bisa nc, ping, curl HIA
+```
+nmap -p 1-100 10.66.0.10
+```
+#### nc
+
+<img width="582" alt="image" src="https://github.com/user-attachments/assets/569ff2e2-184d-4772-9d24-e2d6d904f1ea">
+
+#### ping dan curl
+
+<img width="660" alt="image" src="https://github.com/user-attachments/assets/139f2a13-55d8-41a7-99fd-f76908111057">
+
+
 
 
 
