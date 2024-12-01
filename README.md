@@ -226,7 +226,7 @@ iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source $ETH0_IP
 ### Konfigurasi DHCP Server
 ```
 apt-get update
-apt-get install isc-dhcp-server -y
+apt-get install isc-dhcp-server netcat -y
 service isc-dhcp-server start
 
 echo 'INTERFACESv4="eth0"' > /etc/default/isc-dhcp-server
@@ -271,7 +271,7 @@ sysctl -p
 service isc-dhcp-relay restart
 service rsyslog start
 ```
-## No 2 Fairy
+## Misi 2 No 2
 Tidak ada perangkat lain yang bisa melakukan ping ke Fairy. Tapi Fairy tetap dapat mengakses semua perangkat
 ### Penyelesaian
 jalankan command beerikut di console Fairy
@@ -286,3 +286,53 @@ Fairy dapat ping HIA
 HIA tidak dapat ping Fairy
 
 <img width="520" alt="Screenshot 2024-12-01 at 12 37 04" src="https://github.com/user-attachments/assets/d89d7148-cd4c-47fd-a071-cb697e50bf2e">
+
+## Misi 2 No 3 
+
+Tambahkan config berikut ke `/root/.bashrc`
+```
+export DEBIAN_FRONTEND=noninteractive
+apt update
+apt install bind9 netcat -y
+
+echo 'options {
+        directory "/var/cache/bind";
+
+         forwarders {
+                192.168.122.1;
+         };
+
+        allow-query { any; };
+        auth-nxdomain no;
+
+        listen-on-v6 { any; };
+}; > /etc/bind/named.conf.options
+
+service bind9 restart
+```
+### Testing
+Fairy bisa mengakses HDD
+
+<img width="574" alt="image" src="https://github.com/user-attachments/assets/99a279d5-6cac-4ad1-b3f6-4bc3a82bdf73">
+
+LuminaSquare tidak bisa mengakses HDD
+
+<img width="502" alt="image" src="https://github.com/user-attachments/assets/223b1a31-fff5-4e0e-9f65-0aba93a9aeec">
+
+testing dengan netcat, sebelumnya pastikan telah membuka port yang akan digunakan di HDD. Disini saya menggunakan port 8888
+```
+nc -l -p 8888
+```
+lalu coba test dari Fairy dan nodes bebas lainnya
+
+<img width="547" alt="image" src="https://github.com/user-attachments/assets/1a4e0ba1-ea5e-4be3-8b59-59c564e61164">
+
+<img width="682" alt="image" src="https://github.com/user-attachments/assets/b2676e72-8d9f-45df-89d0-5af634bfa706">
+
+bisa dilihat dari gambar berikut, pesan dari Fairy sampai di HDD sedangkan dari LuminaSquare tidak sampai
+
+<img width="546" alt="image" src="https://github.com/user-attachments/assets/5f5d4ad9-cb40-4073-b2e4-28c7030b2814">
+
+
+
+
