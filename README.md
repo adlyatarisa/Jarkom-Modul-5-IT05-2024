@@ -271,3 +271,18 @@ sysctl -p
 service isc-dhcp-relay restart
 service rsyslog start
 ```
+## No 2 Fairy
+Tidak ada perangkat lain yang bisa melakukan ping ke Fairy. Tapi Fairy tetap dapat mengakses semua perangkat
+### Penyelesaian
+jalankan command beerikut di console Fairy
+```
+iptables -A INPUT -p icmp --icmp-type echo-request -j DROP
+```
+### Testing
+Fairy dapat ping HIA
+
+<img width="554" alt="Screenshot 2024-12-01 at 12 36 09" src="https://github.com/user-attachments/assets/bda798af-19b7-4d1d-9056-b21c36e42ebc">
+
+HIA tidak dapat ping Fairy
+
+<img width="520" alt="Screenshot 2024-12-01 at 12 37 04" src="https://github.com/user-attachments/assets/d89d7148-cd4c-47fd-a071-cb697e50bf2e">
