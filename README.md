@@ -500,8 +500,47 @@ nmap -p 1-100 10.66.0.10
 
 <img width="660" alt="image" src="https://github.com/user-attachments/assets/139f2a13-55d8-41a7-99fd-f76908111057">
 
+## Misi 2 No 7
+> Untuk HollowZero hanya ada 2 koneksi aktif dari 2 IP berbeda dalam waktu bersamaan yang diperbolehkan
+Jalankan command berikut di HollowZero
+```
+iptables -A INPUT -p tcp --dport 80 -m conntrack --ctstate NEW -m recent --set
+iptables -A INPUT -p tcp --dport 80 -m conntrack --ctstate NEW -m recent --update --seconds 1 --hitcount 3 -j REJECT
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+```
+### Testing
+sebelum testing pastikan sudah menginstal parallel
+```
+apt-get update
+apt-get install parallel -y
+```
+lakukan testing dengan command berikut:
+```
+parallel curl -s http://IP-HollowZero ::: IP-Caesar IP-Burnice IP-Jane IP-Policeboo
+```
+<img width="745" alt="image" src="https://github.com/user-attachments/assets/2b2c423f-d638-495e-9430-08ba4bbee91a">
 
 
+## Misi 2 No 8
+> Agar setiap paket yang dikirimkan ke Burnice dapat dialihkan ke HollowZero
 
+Jalankan command berikut di Burnice
+```
+iptables -t nat -A PREROUTING -p tcp --dport 8888 -j DNAT --to-destination 10.66.2.130
+iptables -t nat -A POSTROUTING -p tcp --dport 8888 -j MASQUERADE
+```
+
+### Testing
+#### Jalanin ini di HollowZero
+
+<img width="411" alt="image" src="https://github.com/user-attachments/assets/1c637982-1bbb-4728-be4a-f8eaeba6176b">
+
+#### dari fairy kita netcat ke burnice
+
+<img width="632" alt="image" src="https://github.com/user-attachments/assets/4a2d2c73-40af-40be-8f05-b23b09ffedd5">
+
+#### hasilnya muncul di Hollow
+
+<img width="395" alt="image" src="https://github.com/user-attachments/assets/db00721e-2b1b-4a44-b15c-b5b0e739f253">
 
 
