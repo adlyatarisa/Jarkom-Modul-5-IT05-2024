@@ -212,3 +212,62 @@ post-up route add -net 10.66.0.4 netmask 255.255.255.252 gw 10.66.0.9 #A2
 ```
 post-up route add -net 10.66.2.8 netmask 255.255.255.248 gw 10.66.0.9 #A7
 ```
+
+## Penyelesaian
+### Prerequesite
+tambahkan konfigurasi berikut di `/root/.bashrc` di New Eridu untuk forward IP agar semua nodes terhubung ke internet
+```
+echo net.ipv4.ip_forward=1 >/etc/sysctl.conf
+sysctl -p
+
+ETH0_IP=$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source $ETH0_IP
+```
+### Konfigurasi DHCP Server
+```
+apt-get update
+apt-get install isc-dhcp-server -y
+service isc-dhcp-server start
+
+echo 'INTERFACESv4="eth0"' > /etc/default/isc-dhcp-server
+
+# A4
+echo 'subnet 10.66.0.128 netmask 255.255.255.128 {
+        range 10.66.0.129 10.66.0.254;
+        option routers 10.66.0.129;
+        option broadcast-address 10.66.0.255;
+        option domain-name-servers 10.66.2.10; #IP DNS Server
+}
+# A5
+subnet 10.66.1.0 netmask 255.255.255.0 {
+        range 10.66.1.1 10.66.1.254;
+        option routers 10.66.1.1;
+        option broadcast-address 10.66.1.255;
+        option domain-name-servers 10.66.2.10; #IP DNS Server
+}
+# A8
+subnet 10.66.2.64 netmask 255.255.255.192 {
+        range 10.66.2.65 10.66.2.126;
+        option routers 10.66.2.65;
+        option broadcast-address 10.66.2.127;
+        option domain-name-servers 10.66.2.10; #IP DNS Server
+}
+#A7
+subnet 10.66.2.8 netmask 255.255.255.248 {}'>/etc/dhcp/dhcpd.conf
+```
+### Konfigurasi DHCP Relay
+```
+apt-get update
+apt-get install isc-dhcp-relay netcat -y
+service isc-dhcp-relay start
+
+echo 'SERVERS="10.66.2.11" # IP DHCP Server
+INTERFACES="eth1 eth2 eth3 eth4"
+OPTIONS=""' > /etc/default/isc-dhcp-relay
+
+echo 'net.ipv4.ip_forward=1' > /etc/sysctl.conf
+sysctl -p
+
+service isc-dhcp-relay restart
+service rsyslog start
+```
