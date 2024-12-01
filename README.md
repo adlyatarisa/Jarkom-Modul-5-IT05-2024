@@ -115,7 +115,7 @@ iface eth0 inet static
   netmask 255.255.255.252
   gateway 10.66.2.129
 
-post-up route add -net 10.66.0.0 netmask 255.255.255.252 gw 10.66.2.129 #A1
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 ### LuminaSquare
 ```
@@ -140,7 +140,7 @@ iface eth2 inet static
 
 up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
-### HIA
+### HIA (Webserver)
 ```
 #A3
 auto eth0
@@ -148,6 +148,8 @@ iface eth0 inet static
   address 10.66.0.10
   netmask 255.255.255.248
   gateway 10.66.0.9
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 ### BalletTwins
 ```
@@ -272,7 +274,7 @@ service isc-dhcp-relay restart
 service rsyslog start
 ```
 ## Misi 2 No 2
-Tidak ada perangkat lain yang bisa melakukan ping ke Fairy. Tapi Fairy tetap dapat mengakses semua perangkat
+> Tidak ada perangkat lain yang bisa melakukan ping ke Fairy. Tapi Fairy tetap dapat mengakses semua perangkat
 ### Penyelesaian
 jalankan command beerikut di console Fairy
 ```
@@ -288,7 +290,7 @@ HIA tidak dapat ping Fairy
 <img width="520" alt="Screenshot 2024-12-01 at 12 37 04" src="https://github.com/user-attachments/assets/d89d7148-cd4c-47fd-a071-cb697e50bf2e">
 
 ## Misi 2 No 3 
-
+> HDD hanya bisa diakses oleh Fairy
 1. Tambahkan config berikut ke `/root/.bashrc`
 ```
 export DEBIAN_FRONTEND=noninteractive
@@ -339,6 +341,7 @@ bisa dilihat dari gambar berikut, pesan dari Fairy sampai di HDD sedangkan dari 
 <img width="546" alt="image" src="https://github.com/user-attachments/assets/5f5d4ad9-cb40-4073-b2e4-28c7030b2814">
 
 ## Misi 2 No 4
+> HollowZero hanya bisa diakses oleh Caesar, Burnice, PoliceBoo, Jane pada hari Senin-Jumat
 lakukan config berikut di HollowZero
 ```
 export DEBIAN_FRONTEND=noninteractive
@@ -391,3 +394,66 @@ Policeboo tidak bisa ngeping dan ngecurl HollowZero karena hanya bisa mengakses 
 <img width="605" alt="image" src="https://github.com/user-attachments/assets/aa754aa4-9ccc-49e3-8d41-e01d74fad2a3">
 
 Lycaon tidak bisa ngeping dan ngecurl HollowZero karena tidak memiliki akses sama sekali ke HollowZero
+
+## Misi 2 No 5
+> HIA hanya bisa diakses oleh Ellen dan Lycaon pada pukul 08:00 - 21:00 dan bisa diakses oleh Jane serta Policeboo hanya pada pukul 03:00 - 23:00
+lakukan config berikut di HIA
+```
+export DEBIAN_FRONTEND=noninteractive
+apt update
+apt install apache2 -y
+
+echo 'Welcome to HollowZero' > /var/www/html/index.html
+
+echo '<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+
+service apache2 restart
+```
+Jalankan command berikut di HIA
+```
+iptables -P INPUT DROP
+iptables -A INPUT -s 10.66.0.128/25 -m time --timestart 08:00 --timestop 21:00 -j ACCEPT
+iptables -A INPUT -s 10.66.1.0/24 -m time --timestart 03:00 --timestop 23:00 -j ACCEPT
+```
+
+### Testing
+untuk test yang pertama, coba begini:
+
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/635b6800-3dd9-4829-8639-8018c97459cc">
+
+#### PoliceBoo
+
+<img width="560" alt="image" src="https://github.com/user-attachments/assets/cf4a19ec-0206-4dc4-893e-ef664fe13a1e">
+
+#### Lycaon
+
+<img width="552" alt="image" src="https://github.com/user-attachments/assets/e979d70d-35cb-40d8-aa77-98154c27e282">
+
+dari kedua gambar tersebut, bisa kita lihat bahwa keduanya masih dapat mengakses HIA karena jamnya masih sesuai dengan yang di iptables
+
+untuk test yang kedua, kita ubah salah satu iptables biar tidak bisa akses HIA
+
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/595e70d5-e397-4522-9fa3-ad6e1b62df19">
+
+#### PoliceBoo
+
+<img width="579" alt="image" src="https://github.com/user-attachments/assets/9ce16325-5e61-4d4a-bbd5-8acdae67f768">
+
+PoliceBoo gabisa akses karena cuma bisa sampe jam 17.00 saja sedangkan sekarang jam 18.00an
+
+#### Lycaon
+
+<img width="544" alt="image" src="https://github.com/user-attachments/assets/c721523a-c49d-4203-83d6-4f21875eece2">
+
+Lycaon masih bisa akses karena jam nya masih sesuai
+
+
+
+
