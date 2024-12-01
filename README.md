@@ -181,6 +181,7 @@ iface eth0 inet dhcp
 post-up route add -net 10.66.2.8 netmask 255.255.255.248 gw 10.66.0.2 #A7
 post-up route add -net 10.66.2.0 netmask 255.255.255.248 gw 10.66.0.2 #A6
 post-up route add -net 10.66.2.128 netmask 255.255.255.252 gw 10.66.0.2 #A9
+post-up route add -net 10.66.2.64 netmask 255.255.255.192 gw 10.66.0.2 #A9
 
 #KANAN
 post-up route add -net 10.66.0.8 netmask 255.255.255.248 gw 10.66.0.6 #A3
@@ -543,4 +544,33 @@ iptables -t nat -A POSTROUTING -p tcp --dport 8888 -j MASQUERADE
 
 <img width="395" alt="image" src="https://github.com/user-attachments/assets/db00721e-2b1b-4a44-b15c-b5b0e739f253">
 
+## Misi 3
+> memblokir semua transmisi masuk maupun keluar dari Burnice bisa memanipulasi policy iptables. Sebelum Burnice sepenuhnya terisolasi, Fairy mengirimkan pesan moral:
+“Kepercayaan adalah dasar dari jaringan yang aman. Jangan pernah mengkhianatinya.”
 
+Lakukan command berikut di console Burnice
+```
+iptables -P INPUT DROP
+iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
+```
+### Testing
+coba ini di Fairy
+```
+ echo “Kepercayaan adalah dasar dari jaringan yang aman. Jangan pernah mengkhianatinya.” | nc 10.66.2.67 8888
+```
+Hasilnya bakal begini:
+
+<img width="722" alt="image" src="https://github.com/user-attachments/assets/3ba5c72d-70df-4f19-907e-e5f7fc563467">
+
+sekarang waktunya kita isolasi Burnice, pake command yang sudah saya sebut di atas tadi
+
+<img width="549" alt="image" src="https://github.com/user-attachments/assets/923ca214-1e32-4c28-b14a-d706a24a7b85">
+
+sudah ga bisa ping burnice
+
+<img width="639" alt="image" src="https://github.com/user-attachments/assets/117f5c78-5181-428b-8072-0e578526844a">
+
+burnice sudah tidak bisa ping kemanapun juga, rasakan itu burnice... 
+
+BERESSS bye jarkom 😋
