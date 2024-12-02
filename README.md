@@ -1,4 +1,4 @@
-# Jarkom-Modul-5_IT05_2024
+# Jarkom-Modul-5-IT05-2024
 
 | Nama | NRP |
 | ---- | :-: |
