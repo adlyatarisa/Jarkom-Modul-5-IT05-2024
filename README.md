@@ -292,6 +292,7 @@ HIA tidak dapat ping Fairy
 
 ## Misi 2 No 3 
 > HDD hanya bisa diakses oleh Fairy
+
 1. Tambahkan config berikut ke `/root/.bashrc`
 ```
 export DEBIAN_FRONTEND=noninteractive
@@ -343,6 +344,7 @@ bisa dilihat dari gambar berikut, pesan dari Fairy sampai di HDD sedangkan dari 
 
 ## Misi 2 No 4
 > HollowZero hanya bisa diakses oleh Caesar, Burnice, PoliceBoo, Jane pada hari Senin-Jumat
+
 lakukan config berikut di HollowZero
 ```
 export DEBIAN_FRONTEND=noninteractive
@@ -398,6 +400,7 @@ Lycaon tidak bisa ngeping dan ngecurl HollowZero karena tidak memiliki akses sam
 
 ## Misi 2 No 5
 > HIA hanya bisa diakses oleh Ellen dan Lycaon pada pukul 08:00 - 21:00 dan bisa diakses oleh Jane serta Policeboo hanya pada pukul 03:00 - 23:00
+
 lakukan config berikut di HIA
 ```
 export DEBIAN_FRONTEND=noninteractive
@@ -457,6 +460,7 @@ Lycaon masih bisa akses karena jam nya masih sesuai
 
 ## Misi 2 No 6
 > HIA harus memblokir aktivitas port scanning yang melebihi 25 port dalam rentang 10 detik, penyerang yang diblokir tidak bisa ping, nc, atau curl ke HIA, log dari iptables akan tercatat untuk analisis.
+
 jalankan command bereikut di HIA
 ```
 # Atur rate limit untuk port scanning (maksimum 25 koneksi per 10 detik)
@@ -503,6 +507,7 @@ nmap -p 1-100 10.66.0.10
 
 ## Misi 2 No 7
 > Untuk HollowZero hanya ada 2 koneksi aktif dari 2 IP berbeda dalam waktu bersamaan yang diperbolehkan
+
 Jalankan command berikut di HollowZero
 ```
 iptables -A INPUT -p tcp --dport 80 -m conntrack --ctstate NEW -m recent --set
