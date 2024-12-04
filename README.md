@@ -505,6 +505,9 @@ nmap -p 1-100 10.66.0.10
 
 <img width="660" alt="image" src="https://github.com/user-attachments/assets/139f2a13-55d8-41a7-99fd-f76908111057">
 
+Hasil Analisis
+https://drive.google.com/file/d/1bUIxeWZVaNQJRAic0sr0dP4Omk-S3MJp/view?usp=sharing
+
 ## Misi 2 No 7
 > Untuk HollowZero hanya ada 2 koneksi aktif dari 2 IP berbeda dalam waktu bersamaan yang diperbolehkan
 
